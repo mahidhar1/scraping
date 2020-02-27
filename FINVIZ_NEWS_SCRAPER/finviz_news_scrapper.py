@@ -8,7 +8,7 @@ Created on Sat Feb 22 22:31:51 2020
 import bs4 as bs
 import requests
 import pandas as pd
-
+import re
 
 
 def get_news(tables):
@@ -32,6 +32,11 @@ def get_blogs(tables):
     return pd.DataFrame(data_blogs)
 
 
+def find_data_source_name(link):
+    m = re.findall(r'(?<=feeds.)\w+(?<=.)|(?<=www.)\w+(?<=.)', link)
+    return m[0]
+    
+
 if __name__ == "__main__":
     url = r"https://www.finviz.com/news.ashx"
     r = requests.get(url)
@@ -43,6 +48,8 @@ if __name__ == "__main__":
     data_news = get_news(tables)
     data_blogs = get_blogs(tables)
     
-        
+    data_news[0] = data_news[3].apply(lambda x: find_data_source_name(x))
     
+    
+        
     
