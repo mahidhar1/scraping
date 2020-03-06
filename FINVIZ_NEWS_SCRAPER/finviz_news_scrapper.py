@@ -32,9 +32,17 @@ def get_blogs(tables):
     return pd.DataFrame(data_blogs)
 
 
-def find_data_source_name(link):
+def find_data_source_news(link):
     m = re.findall(r'(?<=feeds.)\w+(?<=.)|(?<=www.)\w+(?<=.)', link)
     return m[0]
+
+def find_data_source_blogs(link):
+    src = link.split("/")[2:]
+    if src[0] == "feedproxy.google.com":
+        return src[2]
+    else: 
+        return src[0].split(".")[0]
+   
     
 
 if __name__ == "__main__":
@@ -48,8 +56,10 @@ if __name__ == "__main__":
     data_news = get_news(tables)
     data_blogs = get_blogs(tables)
     
-    data_news[0] = data_news[3].apply(lambda x: find_data_source_name(x))
+    data_news[0] = data_news[3].apply(lambda x: find_data_source_news(x))
+    data_blogs[0] = data_blogs[3].apply(lambda x: find_data_source_blogs(x))
     
-    
+    data_news.columns = ["source", "time/date", "headline", "url"]
+    data_blogs.columns = ["source", "time/date", "headline", "url"] 
         
     
